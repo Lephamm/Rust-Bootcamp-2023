@@ -4,7 +4,7 @@ fn exercise1() {
     // Use as many approaches as you can to make it work
     let x = String::from("hello, world");
     let y = x;
-    let z = x;
+    let z = y;
 }
 
 // Exercise 2
@@ -13,14 +13,13 @@ fn exercise1() {
 fn exercise2() {
     let s1 = String::from("hello, world");
     let s2 = take_ownership(s1);
-
     println!("{}", s2);
 }
 // Only modify the code below!
-fn take_ownership(s: String) {
-    println!("{}", s);
+fn take_ownership(s: String) -> String {
+    let x = s;
+    x
 }
-
 // Exercise 3
 // Make it compile
 // Dont care about logic
@@ -33,7 +32,7 @@ fn exercise3() {
 
     let values_number = values.len();
 
-    let additions: Vec<usize> = vec![0];
+    let additions: &mut Vec<usize> = &mut vec![0];
 
     println!("{:?}", values_number);
 
@@ -41,7 +40,7 @@ fn exercise3() {
         let mut addition: f64 = 0.0;
 
         // Sumar valores en additions
-        for element_index in additions {
+        for element_index in 1..additions.len() {
             let addition_aux = values[element_index];
             addition = addition_aux + addition;
         }
@@ -50,10 +49,10 @@ fn exercise3() {
 
 // Exercise 4
 // Make it compile
-fn exercise4(value: u32) -> &'static str {
+fn exercise4(value: u32) -> String {
     let str_value = value.to_string(); // Convert u32 to String
-    let str_ref: &str = &str_value; // Obtain a reference to the String
-    str_ref // Return the reference to the String
+    let str_ref = &str_value;
+    str_ref.clone() // Return the reference to the String
 }
 
 // Exercise 5
@@ -69,7 +68,7 @@ fn exercise5() {
         None => {
             let value = "3.0".to_string();
             my_map.insert(key, value);
-            &value // HERE IT FAILS
+            my_map.get(&key).unwrap() // & value // HERE IT FAILS
         }
     };
 
@@ -79,17 +78,17 @@ fn exercise5() {
 // Exercise 6
 // Make it compile
 
-use std::io;
+use std::io::{self, BufRead};
 
 fn exercise6() {
-    let mut prev_key: &str = "";
+    let mut prev_key: String = String::new();
 
-    for line in io::stdin().lines() {
+    for line in io::stdin().lock().lines() {
         let s = line.unwrap();
 
         let data: Vec<&str> = s.split("\t").collect();
-        if prev_key.len() == 0 {
-            prev_key = data[0];
+        if prev_key.is_empty() {
+            prev_key = data[0].to_owned();
         }
     }
 }
@@ -99,8 +98,8 @@ fn exercise6() {
 fn exercise7() {
     let mut v: Vec<&str> = Vec::new();
     {
-        let chars = [b'x', b'y', b'z'];
-        let s: &str = std::str::from_utf8(&chars).unwrap();
+        let chars = &[b'x', b'y', b'z'];
+        let s: &str = std::str::from_utf8(chars).unwrap();
         v.push(&s);
     }
     println!("{:?}", v);
@@ -108,11 +107,12 @@ fn exercise7() {
 
 // Exercise 8
 // Make it compile
+
 fn exercise8() {
-    let mut accounting = vec!["Alice", "Ben"];
-    
+    let mut accounting: Vec<String> = vec!["Alice".to_string(), "Ben".to_string()];
+
     loop {
-        let mut add_input = String::from("");
+        let mut add_input = String::new();
 
         io::stdin()
             .read_line(&mut add_input)
@@ -125,7 +125,7 @@ fn exercise8() {
             continue;
         }
 
-        let person = add_vec[0];
+        let person = add_vec[0].to_string();
         accounting.push(person);
     }
 }
